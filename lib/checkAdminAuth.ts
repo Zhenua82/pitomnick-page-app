@@ -1,5 +1,6 @@
-import type { NextApiRequest } from "next";
+import { cookies } from "next/headers";
 
-export function checkAdminAuth(req: NextApiRequest) {
-  return req.cookies["admin-auth"] === "true";
+export async function checkAdminAuth() {
+  const cookieStore = await cookies();
+  return cookieStore.get("admin-auth")?.value === "true";
 }

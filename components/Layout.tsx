@@ -5,14 +5,12 @@ import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "@/store";
 import { restoreCart } from "@/store/cartSlice";
-// import type { CartItem } from "@/store/cartSlice";
 
 import styles from "./layout.module.css";
-import { CheckoutContext } from "./CheckoutContext";
+import { useCheckout } from "./CheckoutContext";
 import ModalZakaz from "./modalZakaz";
 import sendOrderEmail from "@/handler";
 import sendOrderSMS from "@/SendOrderSMS";
-
 
 /* =========================
    Constants
@@ -28,18 +26,18 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const dispatch = useDispatch<AppDispatch>();
   const items = useSelector((state: RootState) => state.cart.items);
 
-  const [checkoutOpen, setCheckoutOpen] = useState(false);
+  const { checkoutOpen, openCheckout, closeCheckout } = useCheckout();
+
   const [phone, setPhone] = useState("");
   const [phoneError, setPhoneError] = useState<string | null>(null);
 
   /* =========================
-     Save cart to localStorage
+     Restore cart
   ========================= */
 
   useEffect(() => {
     dispatch(restoreCart());
   }, [dispatch]);
-
 
   /* =========================
      Derived values
@@ -55,16 +53,6 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   /* =========================
      Checkout handlers
   ========================= */
-
-  const openCheckout = () => {
-    setPhone("");
-    setPhoneError(null);
-    setCheckoutOpen(true);
-  };
-
-  const closeCheckout = () => {
-    setCheckoutOpen(false);
-  };
 
   const validatePhone = (value: string) => {
     if (!phoneRegex.test(value)) {
@@ -88,13 +76,12 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
 //     alert("Ваш заказ отправлен! Мы свяжемся с вами.");
 //     setPhone("");
-//     setCheckoutOpen(false);
+//     closeCheckout();
 //   } catch (error) {
 //     console.error("Ошибка отправки заказа:", error);
 //     alert("Ошибка отправки. Попробуйте позже.");
 //   }
 // };
-
 
   //Отправка письма через emailjs - https://dashboard.emailjs.com/admin (подходит для github pages - с открытым ключом сервиса emailjs):
 //   const sendOrder = async () => {
@@ -109,17 +96,17 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
 //     alert("Ваш заказ отправлен! Мы свяжемся с вами.");
 //     setPhone("");
-//     setCheckoutOpen(false);
+//     closeCheckout();
 //   } catch (error) {
 //     console.error("Ошибка отправки заказа:", error);
 //     alert("Ошибка отправки. Попробуйте позже.");
 //   }
 // };
 
-//Отправка письма через api с использованием nodemailer (https://id.yandex.ru/security/app-passwords - нужна учетная запись и там можно получить SMTP-пароль) - не работает с output: export:
+  //Отправка письма через api с использованием nodemailer (https://id.yandex.ru/security/app-passwords - нужна учетная запись и там можно получить SMTP-пароль) - не работает с output: export:
   const sendOrder = async () => {
     if (!validatePhone(phone)) return;
-    // const response = await fetch("/pitomnick-page/api/send-order", {
+
     const response = await fetch("/api/send-order", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -129,10 +116,11 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         totalPrice,
       }),
     });
+
     if (response.ok) {
       alert("Ваш заказ отправлен! Мы свяжемся с вами.");
       setPhone("");
-      setCheckoutOpen(false);
+      closeCheckout();
     } else {
       alert("Ошибка отправки. Попробуйте позже.");
     }
@@ -143,7 +131,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   ========================= */
 
   return (
-    <CheckoutContext.Provider value={{ openCheckout }}>
+    <>
       <header className="site-header">
         <div className="container header-inner">
           <Link href="/" className="brand">
@@ -157,7 +145,6 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             <Link href="/aboutUs" className="brand">
               О нас
             </Link>
-
             <Link
               href="/cart"
               className={styles.cartButton}
@@ -192,7 +179,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         validatePhone={validatePhone}
         sendOrder={sendOrder}
       />
-    </CheckoutContext.Provider>
+    </>
   );
 };
 

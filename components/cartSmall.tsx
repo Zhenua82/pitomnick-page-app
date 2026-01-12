@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import styles from './cartSmall.module.css';
 import { useSelector } from "react-redux";

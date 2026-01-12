@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import VariantEditor from "./VariantEditor";
 import type { AdminPlant } from "./AdminPlants";
