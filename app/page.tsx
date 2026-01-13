@@ -43,7 +43,7 @@ export default async function HomePage() {
   return (
     <>
       <section className={styles.hero}>
-        <h1>Питомник хвойных растений</h1>
+        <h1>Питомник хвойных растений</h1><span style={{color: 'red'}}> App Router (fix data)</span>
         <p>
           Короткое приветствие — лучшие саженцы ели, сосны и можжевельника.
         </p>
