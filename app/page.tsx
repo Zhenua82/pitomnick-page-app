@@ -2,11 +2,7 @@ import PlantCard from "@/components/PlantCard";
 import PhoneButton from "@/components/phoneButton";
 import CartSmall from "@/components/cartSmall";
 import styles from "@/styles/Home.module.css";
-
-import { supabaseServer } from "@/lib/supabaseServer";
-import type { Plant } from "@/types/plant";
-
-export const dynamic = "force-dynamic";
+import {plants} from "@/data/plants"
 
 
 export const metadata = {
@@ -15,30 +11,9 @@ export const metadata = {
     "Большой выбор хвойных саженцев и растений в питомнике Анапы. Заказать саженцы онлайн с доставкой по региону. Гарантия качества и лучшие цены!"
 };
 
-async function getPlants(): Promise<Plant[]> {
-  const { data, error } = await supabaseServer
-    .from("plants")
-    .select(`
-      id,
-      slug,
-      title,
-      opisanie,
-      podrobnoe_opisanie1,
-      podrobnoe_opisanie2,
-      plant_variants (
-        age,
-        photo,
-        price
-      )
-    `)
-    .order("title");
-
-  if (error) return [];
-  return data ?? [];
-}
 
 export default async function HomePage() {
-  const plants = await getPlants();
+  const items = Object.values(plants);
 
   return (
     <>
@@ -53,23 +28,15 @@ export default async function HomePage() {
         <h2 className={styles.h2}>Наши растения:</h2>
 
         <div className={styles.grid}>
-          {plants.map((p) => {
-            const adultVariant = p.plant_variants.find(
-              (v) => v.age === "взрослое растение"
-            );
-
-            if (!adultVariant) return null;
-
-            return (
-              <PlantCard
-                key={p.slug}
-                slug={p.slug}
-                title={p.title}
-                image={adultVariant.photo}
-                opisanie={p.opisanie ?? ""}
-              />
-            );
-          })}
+          {items.map((p) => (
+            <PlantCard
+              key={p.slug}
+              slug={p.slug}
+              title={p.title}
+              image={p.photo['взрослое растение']}
+              opisanie={p.opisanie}
+            />
+          ))}
         </div>
       </section>
 

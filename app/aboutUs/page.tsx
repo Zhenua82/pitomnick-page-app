@@ -4,11 +4,9 @@ import YandexMap from "@/components/YandexMap";
 import CartSmall from "@/components/cartSmall";
 import PhoneButton from "@/components/phoneButton";
 import PlantsSlider from "@/components/PlantsSlider";
-import CommentList from "@/components/CommentList";
-import CommentForm from "@/components/CommentForm";
 import styles from "@/styles/About.module.css";
-import { supabaseServer } from "@/lib/supabaseServer";
-import type { Plant } from "@/types/plant";
+
+import {plants} from "@/data/plants"
 
 export const metadata = {
   title: "Страница о питомнике хвойных растений в Анапе",
@@ -19,32 +17,7 @@ export const metadata = {
 // Server Component
 // =========================
 export default async function AboutPage() {
-  // =========================
-  // Fetch plants from Supabase
-  // =========================
-  const { data, error } = await supabaseServer
-    .from("plants")
-    .select(`
-      id,
-      slug,
-      title,
-      opisanie,
-      podrobnoe_opisanie1,
-      podrobnoe_opisanie2,
-      plant_variants (
-        age,
-        photo,
-        price
-      )
-    `)
-    .order("title");
-
-  const plants: Plant[] = data ?? [];
-
-  if (error) {
-    console.error(error);
-  }
-
+  const itemsPlants = Object.values(plants);
   // =========================
   // Render
   // =========================
@@ -103,13 +76,10 @@ export default async function AboutPage() {
 
         <section className={styles.slyder}>
           <h3>Наши растения</h3>
-          {/* PlantsSlider - интерактивный компонент, получаем данные через props */}
-          <PlantsSlider plants={plants} />
+          <PlantsSlider />
         </section>
 
         <section>
-          <CommentList />
-          <CommentForm />
         </section>
       </main>
     </>
