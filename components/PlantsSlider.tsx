@@ -1,3 +1,4 @@
+'use client'
 import React, { useEffect, useMemo, useState } from 'react';
 import styles from './PlantsSlider.module.css';
 import { plants } from '@/data/plants';

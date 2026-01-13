@@ -1,6 +1,5 @@
-import { supabaseServer } from "@/lib/supabaseServer";
-import type { Plant } from "@/types/plant";
 import PlantPageClient from "@/components/PlantPageClient";
+import {plants} from "@/data/plants"
 
 type Props = {
   params: { slug: string } | Promise<{ slug: string }>;
@@ -9,11 +8,8 @@ type Props = {
 // metadata
 export async function generateMetadata({ params }: Props) {
   const resolvedParams = await params; // ✅ распаковываем Promise
-  const { data } = await supabaseServer
-    .from("plants")
-    .select("title")
-    .eq("slug", resolvedParams.slug)
-    .single();
+  const items  = Object.values(plants)
+  const data = items.filter((p) => p.slug === resolvedParams.slug)[0]
 
   return {
     title: data ? `${data.title} — купить саженцы` : "Растение",
@@ -25,26 +21,8 @@ export async function generateMetadata({ params }: Props) {
 
 export default async function Page({ params }: Props) {
   const resolvedParams = await params; // ✅ распаковываем Promise
-
-  const { data } = await supabaseServer
-    .from("plants")
-    .select(
-      `
-      id,
-      slug,
-      title,
-      opisanie,
-      podrobnoe_opisanie1,
-      podrobnoe_opisanie2,
-      plant_variants (
-        age,
-        photo,
-        price
-      )
-    `
-    )
-    .eq("slug", resolvedParams.slug)
-    .single();
-
-  return <PlantPageClient plant={data ?? null} />;
+  const items  = Object.values(plants)
+  const data = items.filter((p) => p.slug === resolvedParams.slug)
+  
+  return <PlantPageClient plant={data[0] ?? null} />;
 }

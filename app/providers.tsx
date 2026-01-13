@@ -4,10 +4,10 @@ import { Provider } from "react-redux";
 import { store } from "@/store";
 import { useEffect } from "react";
 
-// import { useAppDispatch, useAppSelector } from "@/store/hooks";
-// import { loadPlants, restorePlantsFromLS } from "@/store/plantsSlice";
-// import { restoreCart, updateItemPrice } from "@/store/cartSlice";
-import { addItem, updateQuantity, removeItem, clearCart, restoreCart } from "@/store/cartSlice";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { loadPlants, restorePlantsFromLS } from "@/store/plantsSlice";
+import { restoreCart, updateItemPrice } from "@/store/cartSlice";
+// import { addItem, updateQuantity, removeItem, clearCart, restoreCart } from "@/store/cartSlice";
 
 export function ReduxBootstrap({ children }: { children: React.ReactNode }) {
   const dispatch = useAppDispatch();

@@ -10,7 +10,7 @@ import { QtyControl } from "@/hooks/QtyControl";
 import CartSmall from "@/components/cartSmall";
 import PhoneButton from "@/components/phoneButton";
 import Image from "next/image";
-import type { Plant, PlantVariant } from "@/types/plant";
+import type { Plant, AgeKey } from "@/types/plant";
 
 type Props = {
   plant: Plant | null;
@@ -23,14 +23,16 @@ export default function PlantPageClient({ plant }: Props) {
   const [added, setAdded] = useState<Record<string, boolean>>({});
 
   const variants = useMemo(() => {
-    return plant?.plant_variants.filter(
-      (v) => v.age !== "взрослое растение"
-    ) ?? [];
+    if (!plant) return [];
+    return (Object.keys(plant.photo) as AgeKey[]).filter(
+      (a) => a !== "взрослое растение"
+    );
   }, [plant]);
 
   const adultVariant = useMemo(() => {
-    return plant?.plant_variants.find(
-      (v) => v.age === "взрослое растение"
+    if (!plant) return [];
+    return (Object.keys(plant.photo) as AgeKey[]).find(
+      (a) => a === "взрослое растение"
     );
   }, [plant]);
 
@@ -41,23 +43,23 @@ export default function PlantPageClient({ plant }: Props) {
 
     for (const v of variants) {
       const item = cartItems.find(
-        (i) => i.slug === plant.slug && i.age === v.age
+        (i) => i.slug === plant.slug && i.age === v
       );
-      initial[v.age] = item?.quantity ?? 0;
+      initial[v] = item?.quantity ?? 0;
     }
 
     setQty(initial);
   }, [plant, variants, cartItems]);
 
   const updateCart = useCallback(
-    (variant: PlantVariant, newQty: number) => {
+    (variant: AgeKey | string, newQty: number) => {
       dispatch(
         addItem({
           slug: plant!.slug,
-          age: variant.age,
+          age: variant,
           title: plant!.title,
-          photo: variant.photo,
-          price: parseInt(String(variant.price).replace(/\D/g, ""), 10),
+          photo: plant!.photo[variant],
+          price: parseInt(String(plant!.cena[variant]).replace(/\D/g, ""), 10),
           quantity: newQty,
         })
       );
@@ -78,26 +80,26 @@ export default function PlantPageClient({ plant }: Props) {
     <>
       <div className={styles.header}>
         <h1>{plant.title}</h1>
-        {plant.podrobnoe_opisanie1 && <p>{plant.podrobnoe_opisanie1}</p>}
+        {plant.podrobnoeOpisanie1 && <p>{plant.podrobnoeOpisanie1}</p>}
       </div>
 
       <div className={styles.content}>
         <section className={styles.gallery}>
           {variants.map((variant) => {
-            const currentQty = qty[variant.age] || 0;
+            const currentQty = qty[variant] || 0;
 
-            return (
-              <figure key={variant.age} className={styles.figure}>
+            return (             
+              <figure key={variant} className={styles.figure}>
                 <Image
-                  src={variant.photo}
-                  alt={`${plant.title} — ${variant.age}`}
+                  src={plant.photo[variant]}
+                  alt={`${plant.title} — ${variant}`}
                   width={300}
                   height={600}
                 />
 
                 <figcaption>
-                  <strong>{variant.age}</strong>
-                  <div className={styles.price}>{variant.price} ₽</div>
+                  <strong>{variant}</strong>
+                  <div className={styles.price}>{plant.cena[variant]} ₽</div>
                 </figcaption>
 
                 <div className={styles.wrapbutton}>
@@ -106,7 +108,7 @@ export default function PlantPageClient({ plant }: Props) {
                       setQty((prev) => {
                         const newQty = Math.min(
                           1000,
-                          Math.max(0, (prev[variant.age] || 0) + delta)
+                          Math.max(0, (prev[variant] || 0) + delta)
                         );
 
                         queueMicrotask(() => {
@@ -114,13 +116,12 @@ export default function PlantPageClient({ plant }: Props) {
                         });
 
                         if (delta > 0) {
-                          setAdded((p) => ({ ...p, [variant.age]: true }));
+                          setAdded((p) => ({ ...p, [variant]: true }));
                           setTimeout(() => {
-                            setAdded((p) => ({ ...p, [variant.age]: false }));
+                            setAdded((p) => ({ ...p, [variant]: false }));
                           }, 800);
                         }
-
-                        return { ...prev, [variant.age]: newQty };
+                        return { ...prev, [variant]: newQty };
                       });
                     }}
                   >
@@ -128,7 +129,7 @@ export default function PlantPageClient({ plant }: Props) {
                   </QtyControl>
                 </div>
 
-                {added[variant.age] && (
+                {added[variant] && (
                   <div className={styles.addedFloating}>Добавлено!</div>
                 )}
               </figure>
@@ -138,7 +139,7 @@ export default function PlantPageClient({ plant }: Props) {
           {adultVariant && (
             <div className={styles.figure}>
               <Image
-                src={adultVariant.photo}
+                src={plant.photo[adultVariant]}
                 alt={`${plant.title} — взрослое растение`}
                 width={300}
                 height={600}
@@ -155,9 +156,9 @@ export default function PlantPageClient({ plant }: Props) {
         </section>
       </div>
 
-      {plant.podrobnoe_opisanie2 && (
+      {plant.podrobnoeOpisanie2 && (
         <div className={styles.header}>
-          <p>{plant.podrobnoe_opisanie2}</p>
+          <p>{plant.podrobnoeOpisanie2}</p>
         </div>
       )}
     </>

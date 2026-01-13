@@ -6,7 +6,7 @@ import PhoneButton from "@/components/phoneButton";
 import PlantsSlider from "@/components/PlantsSlider";
 import styles from "@/styles/About.module.css";
 
-import {plants} from "@/data/plants"
+// import {plants} from "@/data/plants"
 
 export const metadata = {
   title: "Страница о питомнике хвойных растений в Анапе",
@@ -17,7 +17,8 @@ export const metadata = {
 // Server Component
 // =========================
 export default async function AboutPage() {
-  const itemsPlants = Object.values(plants);
+  // const itemsPlants = Object.values(plants);
+  
   // =========================
   // Render
   // =========================
