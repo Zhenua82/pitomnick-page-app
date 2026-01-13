@@ -10,7 +10,7 @@ export type Plant = {
   cena: Record<AgeKey, string>;
 };
 
-// export type AgeKey = string;
-export type AgeKey = '1 летннее растение' | '2 летннее растение' | '3 летннее растение' | '4 летннее растение' | '5 летннее растение' | 'взрослое растение';
+export type AgeKey = string;
+// export type AgeKey = '1 летннее растение' | '2 летннее растение' | '3 летннее растение' | '4 летннее растение' | '5 летннее растение' | 'взрослое растение';
 
 export type PlantsMap = Record<string, Plant>;
