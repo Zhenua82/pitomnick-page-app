@@ -29,12 +29,19 @@ export default function PlantPageClient({ plant }: Props) {
     );
   }, [plant]);
 
-  const adultVariant = useMemo(() => {
-    if (!plant) return [];
-    return (Object.keys(plant.photo) as AgeKey[]).find(
-      (a) => a === "взрослое растение"
-    );
-  }, [plant]);
+  // const adultVariant = useMemo(() => {
+  //   if (!plant) return [];
+  //   return (Object.keys(plant.photo) as AgeKey[]).find(
+  //     (a) => a === "взрослое растение"
+  //   );
+  // }, [plant]);
+
+  const adultVariant = useMemo<AgeKey | null>(() => {
+  if (!plant) return null;
+  return (Object.keys(plant.photo) as AgeKey[]).find(
+    (a) => a === "взрослое растение"
+  ) ?? null;
+}, [plant]);
 
   useEffect(() => {
     if (!plant) return;
