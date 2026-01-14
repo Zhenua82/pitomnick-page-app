@@ -84,47 +84,47 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 // };
 
   //Отправка письма через emailjs - https://dashboard.emailjs.com/admin (подходит для github pages - с открытым ключом сервиса emailjs):
-//   const sendOrder = async () => {
-//   if (!validatePhone(phone)) return;
-
-//   try {
-//     await sendOrderEmail({
-//       phone,
-//       items,
-//       totalPrice,
-//     });
-
-//     alert("Ваш заказ отправлен! Мы свяжемся с вами.");
-//     setPhone("");
-//     closeCheckout();
-//   } catch (error) {
-//     console.error("Ошибка отправки заказа:", error);
-//     alert("Ошибка отправки. Попробуйте позже.");
-//   }
-// };
-
-  //Отправка письма через api с использованием nodemailer (https://id.yandex.ru/security/app-passwords - нужна учетная запись и там можно получить SMTP-пароль) - не работает с output: export:
   const sendOrder = async () => {
-    if (!validatePhone(phone)) return;
+  if (!validatePhone(phone)) return;
 
-    const response = await fetch("/api/send-order", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        phone,
-        items,
-        totalPrice,
-      }),
+  try {
+    await sendOrderEmail({
+      phone,
+      items,
+      totalPrice,
     });
 
-    if (response.ok) {
-      alert("Ваш заказ отправлен! Мы свяжемся с вами.");
-      setPhone("");
-      closeCheckout();
-    } else {
-      alert("Ошибка отправки. Попробуйте позже.");
-    }
-  };
+    alert("Ваш заказ отправлен! Мы свяжемся с вами.");
+    setPhone("");
+    closeCheckout();
+  } catch (error) {
+    console.error("Ошибка отправки заказа:", error);
+    alert("Ошибка отправки. Попробуйте позже.");
+  }
+};
+
+  //Отправка письма через api с использованием nodemailer (https://id.yandex.ru/security/app-passwords - нужна учетная запись и там можно получить SMTP-пароль) - не работает с output: export:
+  // const sendOrder = async () => {
+  //   if (!validatePhone(phone)) return;
+
+  //   const response = await fetch("/api/send-order", {
+  //     method: "POST",
+  //     headers: { "Content-Type": "application/json" },
+  //     body: JSON.stringify({
+  //       phone,
+  //       items,
+  //       totalPrice,
+  //     }),
+  //   });
+
+  //   if (response.ok) {
+  //     alert("Ваш заказ отправлен! Мы свяжемся с вами.");
+  //     setPhone("");
+  //     closeCheckout();
+  //   } else {
+  //     alert("Ошибка отправки. Попробуйте позже.");
+  //   }
+  // };
 
   /* =========================
      Render
