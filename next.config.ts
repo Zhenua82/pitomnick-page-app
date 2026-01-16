@@ -1,23 +1,21 @@
-import type { NextConfig } from "next";
+/** @type {import('next').NextConfig} */
+const repo = 'pitomnick-page-app';
 
-const nextConfig: NextConfig = {
-  reactStrictMode: true,
-  experimental: {
-    serverActions: {
-      bodySizeLimit: "2mb"
-    }
-  },
+const nextConfig = {
+  output: 'export',
+  trailingSlash: true,
+
+  basePath: `/${repo}`,
+  assetPrefix: `/${repo}/`,
 
   images: {
+    unoptimized: true,
     remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "i.imgur.com"
-      }
-    ]
+      { protocol: 'https', hostname: 'i.imgur.com' }
+    ],
   },
 
-  transpilePackages: ["@supabase/supabase-js"]
+  reactStrictMode: true,
 };
 
-export default nextConfig;
+module.exports = nextConfig;
