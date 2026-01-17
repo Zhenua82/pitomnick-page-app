@@ -3,10 +3,11 @@
 import { neon } from "@neondatabase/serverless";
 import type { Plant } from "@/types/plant";
 
-const sql = neon(process.env.DATABASE_URL!);
+// const sql = neon(process.env.DATABASE_URL!);
 
 
 export async function getAllPlants(): Promise<Plant[]> {
+    const sql = neon(process.env.DATABASE_URL!);
   const rows = await sql`
     SELECT
       p.id,
@@ -38,6 +39,7 @@ export async function getAllPlants(): Promise<Plant[]> {
 export async function getPlantTitleBySlug(
   slug: string
 ): Promise<{ title: string } | null> {
+    const sql = neon(process.env.DATABASE_URL!);
   const rows = await sql`
     SELECT title
     FROM plants
@@ -49,6 +51,7 @@ export async function getPlantTitleBySlug(
 }
 
 export async function getPlantBySlug(slug: string): Promise<Plant | null> {
+    const sql = neon(process.env.DATABASE_URL!);
   const rows = await sql`
     SELECT
       p.id,
