@@ -15,6 +15,7 @@ export const metadata = {
     "Большой выбор хвойных саженцев и растений в питомнике Анапы. Заказать саженцы онлайн с доставкой по региону. Гарантия качества и лучшие цены!"
 };
 
+
 async function getPlants(): Promise<Plant[]> {
   const { data, error } = await supabaseServer
     .from("plants")
