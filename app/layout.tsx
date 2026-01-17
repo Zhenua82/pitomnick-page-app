@@ -7,7 +7,7 @@ export const metadata = {
   title: "Питомник растений",
   description: "Интернет-питомник",
   icons: {
-    icon: "/favicon.ico"
+    icon: "/pitomnick-page-app/favicon.ico"
   }
 };
 
