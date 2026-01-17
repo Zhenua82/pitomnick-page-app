@@ -7,8 +7,8 @@ import PlantsSlider from "@/components/PlantsSlider";
 import CommentList from "@/components/CommentList";
 import CommentForm from "@/components/CommentForm";
 import styles from "@/styles/About.module.css";
-import { supabaseServer } from "@/lib/supabaseServer";
 import type { Plant } from "@/types/plant";
+import { getAllPlants } from "../actions";
 
 export const metadata = {
   title: "Страница о питомнике хвойных растений в Анапе",
@@ -20,30 +20,10 @@ export const metadata = {
 // =========================
 export default async function AboutPage() {
   // =========================
-  // Fetch plants from Supabase
+  // Fetch plants from Neon
   // =========================
-  const { data, error } = await supabaseServer
-    .from("plants")
-    .select(`
-      id,
-      slug,
-      title,
-      opisanie,
-      podrobnoe_opisanie1,
-      podrobnoe_opisanie2,
-      plant_variants (
-        age,
-        photo,
-        price
-      )
-    `)
-    .order("title");
-
+  const data = await getAllPlants();
   const plants: Plant[] = data ?? [];
-
-  if (error) {
-    console.error(error);
-  }
 
   // =========================
   // Render

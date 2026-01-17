@@ -16,9 +16,6 @@ export type Plant = {
   plant_variants: PlantVariant[];
 };
 
-
-
-
 export type AgeKey = string;
 
 export type PlantObsh = {

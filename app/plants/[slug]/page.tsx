@@ -1,6 +1,6 @@
-import { supabaseServer } from "@/lib/supabaseServer";
-import type { Plant } from "@/types/plant";
 import PlantPageClient from "@/components/PlantPageClient";
+
+import { getPlantBySlug, getPlantTitleBySlug } from "@/app/actions";
 
 type Props = {
   params: { slug: string } | Promise<{ slug: string }>;
@@ -8,43 +8,28 @@ type Props = {
 
 // metadata
 export async function generateMetadata({ params }: Props) {
-  const resolvedParams = await params; // ✅ распаковываем Promise
-  const { data } = await supabaseServer
-    .from("plants")
-    .select("title")
-    .eq("slug", resolvedParams.slug)
-    .single();
+  const resolvedParams = await params;
+  const data = await getPlantTitleBySlug(resolvedParams.slug);
+
+  if (!data) {
+    return {
+      title: "Растение",
+      description: "Растение не найдено",
+    };
+  }
 
   return {
-    title: data ? `${data.title} — купить саженцы` : "Растение",
-    description: data
-      ? `Купить ${data.title} в питомнике`
-      : "Растение не найдено",
+    title: `${data.title} — купить саженцы`,
+    description: `Купить ${data.title} в питомнике`,
   };
 }
 
 export default async function Page({ params }: Props) {
   const resolvedParams = await params; // ✅ распаковываем Promise
 
-  const { data } = await supabaseServer
-    .from("plants")
-    .select(
-      `
-      id,
-      slug,
-      title,
-      opisanie,
-      podrobnoe_opisanie1,
-      podrobnoe_opisanie2,
-      plant_variants (
-        age,
-        photo,
-        price
-      )
-    `
-    )
-    .eq("slug", resolvedParams.slug)
-    .single();
+  const data = await getPlantBySlug(resolvedParams.slug);
+
+  if (!data) return <div>Not found</div>;
 
   return <PlantPageClient plant={data ?? null} />;
 }

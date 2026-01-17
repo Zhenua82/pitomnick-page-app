@@ -3,47 +3,22 @@ import PhoneButton from "@/components/phoneButton";
 import CartSmall from "@/components/cartSmall";
 import styles from "@/styles/Home.module.css";
 
-import { supabaseServer } from "@/lib/supabaseServer";
-import type { Plant } from "@/types/plant";
+import { getAllPlants } from "@/app/actions";
 
 export const dynamic = "force-dynamic";
-
-
 export const metadata = {
   title: "Питомник хвойных растений в Анапе — купить саженцы и растения",
   description:
     "Большой выбор хвойных саженцев и растений в питомнике Анапы. Заказать саженцы онлайн с доставкой по региону. Гарантия качества и лучшие цены!"
 };
 
-async function getPlants(): Promise<Plant[]> {
-  const { data, error } = await supabaseServer
-    .from("plants")
-    .select(`
-      id,
-      slug,
-      title,
-      opisanie,
-      podrobnoe_opisanie1,
-      podrobnoe_opisanie2,
-      plant_variants (
-        age,
-        photo,
-        price
-      )
-    `)
-    .order("title");
-
-  if (error) return [];
-  return data ?? [];
-}
-
 export default async function HomePage() {
-  const plants = await getPlants();
+  const plants = await getAllPlants();
 
   return (
     <>
       <section className={styles.hero}>
-        <h1>Питомник хвойных растений</h1><span style={{color: 'red'}}> App Router (Supabase)</span>
+        <h1>Питомник хвойных растений</h1><span style={{color: 'red'}}> App Router (Neon)</span>
         <p>
           Короткое приветствие — лучшие саженцы ели, сосны и можжевельника.
         </p>
